@@ -1,4 +1,11 @@
 let isRegister = 'true';
+let page = window.location.pathname;
+let fields = page.split('/');
+page = fields.pop();
+let islogregpage = false;
+if (page == 'logreg.html') {
+    islogregpage = true;
+}
 
 let days = {
     date:'',
@@ -20,12 +27,19 @@ let dataArr = [];
 let vacations = [];
 
 let showLogin = () => {
-    firstNameDiv.hidden = true;
-    lastNameDiv.hidden = true;
-    classCodeDiv.hidden = true;
-    authType.innerHTML = 'Login';
-    logInRegBtn.innerHTML = 'Login';
-    isRegister = 'false';
+    if(localStorage.isLogedin == 'true'){
+        localStorage.isLogedin = 'false';
+        window.location.href = "./logreg.html";
+    }
+    if (islogregpage) {
+        firstNameDiv.hidden = true;
+        lastNameDiv.hidden = true;
+        classCodeDiv.hidden = true;
+        authType.innerHTML = 'Login';
+        if(islogregpage) logInRegBtn.innerHTML = 'Login';
+        isRegister = 'false';
+    }
+    
 }
 
 logInReg.addEventListener('click', showLogin);
@@ -35,7 +49,7 @@ let showReg = () => {
     lastNameDiv.hidden = false;
     classCodeDiv.hidden = false;
     authType.innerHTML = 'Register';
-    logInRegBtn.innerHTML = 'Register';
+    if(islogregpage) logInRegBtn.innerHTML = 'Register';
     isRegister = 'true';
 }
 
@@ -44,30 +58,37 @@ reg.addEventListener('click', showReg);
 let checkLogin = () => {
     if (localStorage.isLogedin == 'true') {
         logInReg.innerHTML = 'Logout';
-        salute.innerHTML = `Hello ${localStorage.userName}`;
-        //content.hidden = false;
-        authPopup.hidden = true;
+        salute.innerHTML = `Hello ${localStorage.email}`;
+        if (page != 'main.html') {
+            window.location.href = "./main.html";
+        }
     }else {
         logInReg.innerHTML = 'Login';
         salute.innerHTML = 'Hello, please login or register';
-        //content.hidden = true;
-        authPopup.hidden = false;
     }
 }
 
 checkLogin();
 
 let authantication = () => {
-
+    if(localStorage.email == email.value &&
+    localStorage.pass == pass.value){
+        localStorage.isLogedin = 'true';
+        checkLogin();
+    } else {
+        localStorage.isLogedin = 'false';
+        alert('User name or password does not match!');
+        checkLogin();
+    }
 }
 
-let register= () => {
+let register = () => {
     person.id ='1';
     person.photo = './assets/personal-photos/1.jpg';
-    person.name = 'firstName.value';
-    person.lastName = 'lastName.value';
-    person.email = 'email.value';
-    person.className = 'classCode.value';
+    person.name = firstName.value;
+    person.lastName = lastName.value;
+    person.email = email.value;
+    person.className = classCode.value;
 
     dataArr.push(JSON.stringify(person));
 
@@ -77,7 +98,6 @@ let register= () => {
 }
 
 let submit = () => {
-    alert('ddd');
     if(isRegister == 'true') {
         register();
     } else {
@@ -85,4 +105,4 @@ let submit = () => {
     }
 }
 
-logInRegBtn.addEventListener('click', submit);
+if(islogregpage) {logInRegBtn.addEventListener('click', submit)};
