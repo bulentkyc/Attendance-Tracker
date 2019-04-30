@@ -25,6 +25,71 @@ let person = {
 };
 let dataArr = [];
 let vacations = [];
+let daysOfYear = [];
+let daysOfMonth = [];
+
+let fillDaysOfYear =() => {
+    let day = new Date(2019, 0, 1);
+    daysOfYear.push(day);
+    console.log(day.getTime());
+    //let nextDay = new Date();
+    for (i=1; i<=365; i++){
+        day = new Date(day.getTime() + (24*60*60*1000));
+        daysOfYear.push(day);
+        if(day.getDay() == 6 || day.getDay() == 0) vacations.push(day);
+    }
+    console.log(daysOfYear);
+    localStorage.daysOfYear = JSON.stringify(daysOfYear);
+    localStorage.vacations = JSON.stringify(vacations);
+}
+
+fillDaysOfYear();
+
+let formatDate = (date) => {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [day, month, year].join('.');
+}
+
+let fillDaysOfMonth =() => {
+    let day = new Date(2019, 4, 1);
+    //daysOfMonth.push(day);
+    //console.log(day.getTime());
+    //let nextDay = new Date();
+    for (i=1; i<=31; i++){
+        day = new Date(day.getTime() + (24*60*60*1000));
+        daysTable.innerHTML += `<tr>
+                    <th scope="row">${formatDate(day)}</th>
+                    <td><button class="w-100 btn btn-success" id="coming">Coming</button></td>
+                    <td><button class="w-100 btn btn-danger" id="leaving">Leaving</button></td>
+                    <td></td>
+                    <td></td>
+                </tr>`;
+        day = new Date(day.getTime() + (24*60*60*1000));
+        daysOfMonth.push(day);
+    }
+    localStorage.daysOfMonth = JSON.stringify(daysOfMonth);
+}
+
+fillDaysOfMonth();
+
+//daysOfMonth = JSON.parse("[" + localStorage.daysOfYear + "]");
+//console.log(daysOfYear);
+
+for(item of daysOfYear){
+    if(new Date(item).getMonth == new Date().getMonth){
+        console.log('item');
+    }
+}
+
+
+
 
 let showLogin = () => {
     if(localStorage.isLogedin == 'true'){
@@ -45,12 +110,17 @@ let showLogin = () => {
 logInReg.addEventListener('click', showLogin);
 
 let showReg = () => {
-    firstNameDiv.hidden = false;
-    lastNameDiv.hidden = false;
-    classCodeDiv.hidden = false;
-    authType.innerHTML = 'Register';
-    if(islogregpage) logInRegBtn.innerHTML = 'Register';
-    isRegister = 'true';
+    if (islogregpage) {
+        firstNameDiv.hidden = false;
+        lastNameDiv.hidden = false;
+        classCodeDiv.hidden = false;
+        authType.innerHTML = 'Register';
+        if(islogregpage) logInRegBtn.innerHTML = 'Register';
+        isRegister = 'true';
+    } else {
+        localStorage.isLogedin = 'false';
+        window.location.href = "./logreg.html";
+    };
 }
 
 reg.addEventListener('click', showReg);
